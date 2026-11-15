@@ -252,7 +252,8 @@ def build(path, open_browser=True, hist_only=False):
     league = None
     if cnt:
         cid = cnt.most_common(1)[0][0]
-        lf = [x for x in season_fx(s_start) if x.competition_id == cid]
+        # league matchdays only: play-off rounds (semi-final, final) carry a round code
+        lf = [x for x in season_fx(s_start) if x.competition_id == cid and x.round is None]
         teams = {}
         for x in lf:
             teams[x.home_team_id] = (x.home_club_uid, x.home_club_short_name or x.home_club_name)
@@ -264,6 +265,18 @@ def build(path, open_browser=True, hist_only=False):
                 r = tbl[t]; r[0] += 1; r[4] += gf; r[5] += ga; r[1 if gf > ga else 2 if gf == ga else 3] += 1
         order = sorted(teams, key=lambda t: (-(tbl[t][1] * 3 + tbl[t][2]), -(tbl[t][4] - tbl[t][5]), -tbl[t][4], teams[t][1]))
         pos_in_table = {t: i + 1 for i, t in enumerate(order)}
+        # prefer the game's own table (official positions and tie-breakers) when the save has it
+        try:
+            for lt in s.league_tables():
+                if lt.competition_id != cid or not any(r.team_id in teams for r in lt.rows): continue
+                if not any(r.team_id in mine for r in lt.rows): continue
+                for r in lt.rows:
+                    if r.team_id in teams:
+                        tbl[r.team_id] = [r.played, r.won, r.drawn, r.lost, r.goals_for, r.goals_against]
+                        pos_in_table[r.team_id] = r.position
+                break
+        except Exception as e:
+            print('  (league table not readable, using fixtures:', e, ')')
         by = collections.defaultdict(list)
         for p in players:
             if p.team_id in teams: by[p.team_id].append(p)
@@ -327,9 +340,9 @@ def build(path, open_browser=True, hist_only=False):
                  xi=my['xi'] if my else xis['4-3-3']['avg'], top18=my['top18'] if my else None, value=my['value'] if my else None, median=my['median'] if my else None,
                  wages=my['wages'] if my else None, pos=my['pos'] if my and now and league['played'] else None,
                  pts=my['pts'] if my and now else None, pl=my['pl'] if my and now else None, gf=my['gf'] if my and now else None, ga=my['ga'] if my and now else None,
-                 xiRank=(sorted(lr, key=lambda r: -r['xi']).index(my) + 1) if my else None,
+                 xiRank=(sorted(lr, key=lambda r: -r['xi']).index(my) + 1) if my and now else None,
                  valRank=(sorted(lr, key=lambda r: -r['value']).index(my) + 1) if my else None, n=len(lr),
-                 leagueXi=round(sum(r['xi'] for r in lr) / len(lr), 1) if lr else None,
+                 leagueXi=round(sum(r['xi'] for r in lr) / len(lr), 1) if lr and now else None,
                  squad={str(p.uid): [p.name, p.ability.current, p.ability.potential, p.age,
                                        '/'.join([g for g, v in sorted(zip(GROUPS, groups(p)), key=lambda x: -x[1]) if v >= 15][:2])] for p in myps if not p.on_loan})
     hist = save_hist(load_hist(), entry)

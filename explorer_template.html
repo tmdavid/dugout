@@ -460,7 +460,8 @@ function renderOv(){
   const lr=L?L.rows.slice().sort((a,b)=>b.xi-a.xi):[]; const myRank=lr.findIndex(r=>r.me)+1;
   const myRow=L?L.rows.find(r=>r.me):null;
   const vr=myRow?L.rows.slice().sort((a,b)=>b.value-a.value).findIndex(r=>r.me)+1:null;
-  const big=[[myRow&&L.played?`${myRow.pos}º`:'–','League position',myRow&&L.played?`${myRow.pts} pts from ${myRow.pl} games`:'Season not started'],
+  const cur=L&&L.season==='this season';
+  const big=[[myRow&&L.played&&cur?`${myRow.pos}º`:'–','League position',myRow&&L.played&&cur?`${myRow.pts} pts from ${myRow.pl} games`:(myRow&&L.played?`New season not started · finished ${myRow.pos}º last season`:'Season not started')],
     [x.avg,'Best XI',`${formation} · ${myRank}º of ${lr.length} on paper`],
     [myRow?eurS(myRow.value):'–','Squad value',vr?`${vr}º of ${L.rows.length} · median ${eurS(myRow.median)}`:''],
     [fi?eurS(fi.transfer):'–','Transfer budget',fi?`wage room ${eurS((fi.wageBudgetWeek-fi.payrollWeek)*52/12)}/mo`:'']];
@@ -704,11 +705,12 @@ const LG={
  'Money':[['value','Total value','n'],['median','Median','n'],['top11','Top-11 avg','n'],['wages','Wages/mo','n'],['bal','Balance','n'],['tb','Budget','n']],
  'Squad profile':[['size','Squad','n'],['age','Age','n'],['xiage','XI age','n'],['young','U21 talents','n']]};
 const LORDER=(DATA.league&&DATA.league.played)?['This season','Squad strength','Money','Squad profile']:['Squad strength','Money','Squad profile','This season'];
-const GRP=[['',1]].concat(LORDER.map(g=>[g,LG[g].length]));
+const GRP=[['',1]].concat(LORDER.map(g=>[g==='This season'&&DATA.league&&DATA.league.season!=='this season'?'Last season (final)':g,LG[g].length]));
 const LCOLS=[['team','Club']].concat(...LORDER.map(g=>LG[g]));
 function renderLeague(){
   const L=DATA.league; if(!L){ $('lgtitle').textContent='No league found in this save'; $('lgt').innerHTML=''; return; }
-  $('lgtitle').textContent=`League comparison · ${L.season}`;
+  const old=L.season!=='this season';
+  $('lgtitle').innerHTML=old?`League comparison · <span class="tag t-neu">last season</span> <span class="mut" style="font-weight:400">The new season's fixtures aren't in the save yet (promoted or relegated? your new league appears here automatically once the game publishes the fixtures, usually a few weeks into pre-season).</span>`:`League comparison · ${L.season}`;
   const byXi=L.rows.slice().sort((a,b)=>b.xi-a.xi); byXi.forEach((r,i)=>r.xirank=i+1);
   const rows=L.rows.slice().sort((a,b)=>{ const va=lgSort==='gd'?a.gf-a.ga:a[lgSort], vb=lgSort==='gd'?b.gf-b.ga:b[lgSort]; return (typeof va==='string'?va.localeCompare(vb):va-vb)*lgDir; });
   const rng={}; HEAT.forEach(k=>{ rng[k]=L.rows.map(r=>r[k]).filter(x=>x!=null).sort((a,b)=>a-b); });

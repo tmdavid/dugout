@@ -1,0 +1,10 @@
+{
+  "defaults": {
+    "noeng": true,
+    "wagemax": 40,
+    "repmax": 300
+  },
+  "nations": {
+    "999": "Name for nation #999"
+  }
+}

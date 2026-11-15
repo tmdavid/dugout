@@ -1,0 +1,24 @@
+{
+  "title": "The Europa Years",
+  "subtitle": "A running chronicle of my save",
+  "updated": "2029-11-04",
+  "leagues": [
+    { "from": "2026-07-01", "to": "2027-06-30", "name": "Third tier", "level": 2 },
+    { "from": "2027-07-01", "to": "2099-06-30", "name": "Second tier", "level": 1 }
+  ],
+  "chapters": [
+    {
+      "id": "c1",
+      "season": "2026/27",
+      "from": "2026-07-01",
+      "to": "2027-06-30",
+      "title": "Out of the third tier",
+      "kicker": "Promotion",
+      "quote": "A one-line pull quote for the chapter.",
+      "body": [
+        "First paragraph of the chapter.",
+        "Second paragraph. The league position, goals, value, the typical eleven and the signings for this date range are added automatically from history.json."
+      ]
+    }
+  ]
+}

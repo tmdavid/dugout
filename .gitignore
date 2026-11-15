@@ -1,0 +1,8 @@
+# your own data: never commit
+fm_explorer.html
+version.txt
+history.json
+chronicle.json
+settings.json
+__pycache__/
+*.fm

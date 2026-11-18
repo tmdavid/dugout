@@ -11,10 +11,16 @@ if "%PY%"=="" (
   pause
   exit /b 1
 )
-%PY% -c "import fmsave" >nul 2>nul
+echo Checking for fmsave updates ^(new FM patches often need a newer fmsave^)...
+%PY% -m pip install --upgrade --quiet --disable-pip-version-check fmsave
 if errorlevel 1 (
-  echo Installing fmsave ^(first run only^)...
-  %PY% -m pip install --upgrade fmsave
+  %PY% -c "import fmsave" >nul 2>nul
+  if errorlevel 1 (
+    echo Could not install fmsave. Check your internet connection and try again.
+    pause
+    exit /b 1
+  )
+  echo Could not check for updates, using the installed fmsave.
 )
 echo.
 echo Watching your FM saves. Every time FM saves, the explorer rebuilds itself (1-2 minutes)

@@ -389,7 +389,11 @@ def watch(path=None, port=8765):
                 if (st2.st_mtime, st2.st_size) != (st.st_mtime, st.st_size): continue
                 print(f"\n[{time.strftime('%H:%M')}] new save detected: {os.path.basename(f)}")
                 try: build(f, open_browser=False)
-                except Exception as e: print('  build failed:', e)
+                except Exception as e:
+                    print('  build failed:', e)
+                    if 'layout' in str(e) or 'framing' in str(e) or 'Unknown' in type(e).__name__:
+                        print('  This usually means FM was patched. Close this window and start it again:'
+                              ' it updates fmsave automatically. If it still fails, fmsave needs an update for this patch.')
                 seen = sig
                 if not opened: webbrowser.open(url); opened = True
             time.sleep(10)

@@ -77,7 +77,7 @@ Click any name, anywhere, to open his full profile: attributes, hidden attribute
 2. Download this repository (green **Code** button → **Download ZIP**) and unzip it anywhere.
 3. Double-click **`Run FM Explorer.bat`**.
 
-The first run installs [fmsave](https://github.com/rhiever/fmsave). Every run reads your newest save from `Documents\Sports Interactive\Football Manager 27\games`, which takes 1–2 minutes, and opens `fm_explorer.html`.
+Every run installs or updates [fmsave](https://github.com/rhiever/fmsave), so fixes for new FM patches arrive automatically. Every run reads your newest save from `Documents\Sports Interactive\Football Manager 27\games`, which takes 1–2 minutes, and opens `fm_explorer.html`.
 To use a specific save, drag the `.fm` file onto the `.bat`.
 
 **Mac / Linux:** `pip install fmsave`, then `python3 fm_explorer.py "/path/to/save.fm"`.
@@ -113,7 +113,7 @@ Each chapter has a date range, a title, a pull quote and paragraphs. FM Explorer
 
 ## Limitations
 
-- **FM27 only**, and only as far as [fmsave](https://github.com/rhiever/fmsave) supports your game build. When FM patches change the save format, fmsave needs an update first.
+- **FM27 only**, and only as far as [fmsave](https://github.com/rhiever/fmsave) supports your game build. When an FM patch changes the save format you'll see an error like *"save layout differs from what fmsave expects"*. Restart the launcher to pull the latest fmsave, or run `pip install -U fmsave`. If it still fails, fmsave needs an update for that patch.
 - Saves store **no nation names**. FM Explorer ships the common ones; the rest show as `#id` and can be named in `settings.json`.
 - "Will he come?" is a heuristic based on reputation, not the game's own interest logic.
 - Values and wages are what the save stores. The game may ask for different figures in negotiations.
